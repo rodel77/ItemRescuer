@@ -43,6 +43,20 @@ public class DataManager {
 			}
 		}
 		
+		player.getInventory().addItem(inv.getCursor());
+		
+		for(ItemStack matrix : inv.getMatrix()){
+			player.getInventory().addItem(matrix);
+		}
+		
+		for(ItemStack anvil : inv.getAnvil()){
+			player.getInventory().addItem(anvil);
+		}
+		
+		for(ItemStack enchanting : inv.getEnchanting()){
+			player.getInventory().addItem(enchanting);
+		}
+		
 			EntityEquipment equip = player.getEquipment();
 			
 			equip.setHelmet(isr.returnIfHasMarkAndOwner(inv.getHelmet(), player));
@@ -88,6 +102,10 @@ public class DataManager {
 			ItemStack chesplate = getItem(player+".chesplate");
 			ItemStack leggings = getItem(player+".leggings");
 			ItemStack boots = getItem(player+".boots");
+			ItemStack cursor = getItem(player+".cursor");
+			List<ItemStack> enchanting = translateBack(getStringList(player+".enchanting"));
+			List<ItemStack> craft = translateBack(getStringList(player+".craft"));
+			List<ItemStack> anvil = translateBack(getStringList(player+".anvil"));
 			
 			InventorySave save = new InventorySave(Bukkit.getPlayer(player), false);
 			save.setContents(contents.toArray(new ItemStack[] {}));
@@ -95,6 +113,10 @@ public class DataManager {
 			save.setChesplate(chesplate);
 			save.setLeggings(leggings);
 			save.setBoots(boots);
+			save.setCursor(cursor);
+			save.setAnvil(anvil.toArray(new ItemStack[] {}));
+			save.setMatrix(craft.toArray(new ItemStack[] {}));
+			save.setEnchanting(enchanting.toArray(new ItemStack[] {}));
 			return save;
 		}
 		
@@ -118,10 +140,14 @@ public class DataManager {
 		List<Boolean> results = new ArrayList<>();
 		
 		results.add(setItems(uid, "contents", Arrays.asList(save.getContents())));
+		results.add(setItems(uid, "craft", Arrays.asList(save.getMatrix())));
+		results.add(setItems(uid, "anvil", Arrays.asList(save.getAnvil())));
+		results.add(setItems(uid, "enchanting", Arrays.asList(save.getEnchanting())));
 		results.add(setItems(uid, "helmet", createArray(save.getHelmet())));
 		results.add(setItems(uid, "chesplate", createArray(save.getChesplate())));
 		results.add(setItems(uid, "leggings", createArray(save.getLeggings())));
 		results.add(setItems(uid, "boots", createArray(save.getBoots())));
+		results.add(setItems(uid, "cursor", createArray(save.getCursor())));
 		
 		if(results.contains(true)){
 			setNode(uid, "timestamp", System.currentTimeMillis());

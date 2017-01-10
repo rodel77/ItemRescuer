@@ -1,7 +1,10 @@
 package mx.com.rodel.itemrescuer;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -23,7 +26,6 @@ import org.bukkit.inventory.ItemStack;
 
 import mx.com.rodel.InventoryRescuer;
 import mx.com.rodel.utils.DataManager;
-import mx.com.rodel.utils.Utils;
 
 /** This file is part of Inventory Rescurer Spigot Resource
 *
@@ -41,6 +43,12 @@ public class ItemRescurerListener implements Listener {
 	
 	@EventHandler
 	public void onPlayerDropItemEvent(PlayerDropItemEvent e){
+		
+		if(e.getPlayer().getHealth()<0){
+			
+			return;
+		}
+		
 		if(isr.hasMark(e.getItemDrop().getItemStack()) && !e.getPlayer().hasPermission("itemrescurer.itemrestriction.drop")){
 			int i = 0;
 			boolean space = false;
@@ -110,27 +118,101 @@ public class ItemRescurerListener implements Listener {
 		}
 	}
 	
-	@EventHandler(priority=EventPriority.HIGHEST)
-	public void onPlayerDeathEvent(PlayerDeathEvent e){
-		if(!e.getKeepInventory()){
-			if(e.getDrops().isEmpty() && !Utils.isEmpty(e.getEntity())){
-				for(Entity entity : e.getEntity().getNearbyEntities(5, 5, 5)){
-					if(entity instanceof Item && isr.isOwner(e.getEntity(), ((Item) entity).getItemStack())){
-						if(isr.isOwner(e.getEntity(), ((Item) entity).getItemStack())){
-							entity.remove();
-						}
-					}
+	@EventHandler(priority=EventPriority.LOWEST)
+	public void onPlayerDeathEvent2(final PlayerDeathEvent e){
+		if(e.getKeepInventory()){
+			return;
+		}
+		
+		final Location loc = e.getEntity().getLocation().clone();
+		for (int i = 0; i < e.getDrops().size(); i++) {
+			ItemStack stack = e.getDrops().get(i);
+			if(stack!=null && stack.getType()!=Material.AIR && isr.isOwner(e.getEntity(), stack)){
+				e.getDrops().remove(stack);
+			}
+		}
+		
+		for(Entity entity : getNearbyEntities(loc, 5)){
+			if(entity instanceof Item && isr.isOwner(e.getEntity(), ((Item) entity).getItemStack())){
+				if(isr.isOwner(e.getEntity(), ((Item) entity).getItemStack())){
+					entity.remove();
 				}
-			}else{
-				for(ItemStack stack : new ArrayList<>(e.getDrops())){
-					if(stack!=null && stack.getType()!=Material.AIR && isr.isOwner(e.getEntity(), stack)){
-						e.getDrops().remove(stack);
+			}
+		}
+	}
+	
+	@EventHandler(priority=EventPriority.HIGHEST)
+	public void onPlayerDeathEvent(final PlayerDeathEvent e){
+		if(!e.getKeepInventory()){
+			final Location loc = e.getEntity().getLocation().clone();
+//			System.out.println(e.getDrops().size());
+			
+			for (int i = 0; i < e.getDrops().size(); i++) {
+				ItemStack stack = e.getDrops().get(i);
+				if(stack!=null && stack.getType()!=Material.AIR && isr.isOwner(e.getEntity(), stack)){
+					e.getDrops().remove(stack);
+				}
+			}
+			
+			for(Entity entity : getNearbyEntities(loc, 5)){
+				if(entity instanceof Item && isr.isOwner(e.getEntity(), ((Item) entity).getItemStack())){
+					if(isr.isOwner(e.getEntity(), ((Item) entity).getItemStack())){
+						entity.remove();
 					}
 				}
 			}
+			
+//			if(e.getDrops().isEmpty() && !Utils.isEmpty(e.getEntity())){
+				Bukkit.getScheduler().runTaskLater(InventoryRescuer.getInstance(), new Runnable() {
+					public void run() {
+						for(Entity entity : getNearbyEntities(loc, 5)){
+							if(entity instanceof Item && isr.isOwner(e.getEntity(), ((Item) entity).getItemStack())){
+								if(isr.isOwner(e.getEntity(), ((Item) entity).getItemStack())){
+									entity.remove();
+								}
+							}
+						}
+					}
+				}, 1);
+				
+//				Bukkit.getScheduler().runTaskLater(InventoryRescuer.getInstance(), new Runnable() {
+//					public void run() {
+//						for(Entity entity : getNearbyEntities(loc, 5)){
+//							System.out.println(entity);
+//							if(entity instanceof Item && isr.isOwner(e.getEntity(), ((Item) entity).getItemStack())){
+//								if(isr.isOwner(e.getEntity(), ((Item) entity).getItemStack())){
+//									entity.remove();
+//								}
+//							}
+//						}
+//					}
+//				}, 20);
+//			}else{
+//				for(ItemStack stack : new ArrayList<>(e.getDrops())){
+//					if(stack!=null && stack.getType()!=Material.AIR && isr.isOwner(e.getEntity(), stack)){
+//						e.getDrops().remove(stack);
+//					}
+//				}
+//			}
 
+//			System.out.println(((CraftingInventory) e.getEntity().getOpenInventory().getTopInventory()).getMatrix().length);
+			
 			DataManager.setInventorySave(new InventorySave(e.getEntity(), e.getKeepInventory()));
+			
+//			e.getEntity().getOpenInventory().setCursor(new ItemStack(Material.AIR));
 		}
+	}
+	
+	public List<Entity> getNearbyEntities(Location l, int size){
+		List<Entity> entities = new ArrayList<>();
+		
+		for(Entity e : l.getChunk().getEntities()){
+			if(l.distance(e.getLocation())<=size){
+				entities.add(e);
+			}
+		}
+		
+		return entities;
 	}
 	
 	@EventHandler

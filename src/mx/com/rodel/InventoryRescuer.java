@@ -79,7 +79,7 @@ public class InventoryRescuer extends JavaPlugin{
 		nodes.put("itemrescurer.glow", true);
 		nodes.put("itemrescurer.lore", new String[] {"&e&oPlace this item in crafting bench", "&e&oAnd then place one item to save it", "&dOnly have 1 use!"});
 		nodes.put("itemrescurer.craft.enabled", false);
-		nodes.put("itemrescurer.craft.shape", Arrays.asList(new String[] {"42,341,42", "42,351:1,42", "42,138,42"}));
+		nodes.put("itemrescurer.craft.shape", new String[] {"42,341,42", "42,351:1,42", "42,138,42"});
 		nodes.put("itemrescurer.crafting.allowed", new String[] {"256-258", "267-279", "283-286", "290-294", "298-317", "346"});
 		nodes.put("itemrescurer.crafting.denied", new String[] {"268-271", "290"});
 		nodes.put("itemrescurer.displayonitem", true);
@@ -172,6 +172,7 @@ public class InventoryRescuer extends JavaPlugin{
 	
 	@SuppressWarnings("unchecked")
 	public void init(){
+		loadConfiguration();
 		ItemStackRescurer it = new ItemStackRescurer();
 		it.init();
 		if((boolean)getNode("itemrescurer.craft.enabled")){

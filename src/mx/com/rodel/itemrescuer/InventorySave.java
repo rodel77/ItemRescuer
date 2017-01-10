@@ -2,6 +2,9 @@ package mx.com.rodel.itemrescuer;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.ItemStack;
 
 import mx.com.rodel.InventoryRescuer;
@@ -17,10 +20,14 @@ import mx.com.rodel.utils.Utils;
 public class InventorySave {
 	private boolean keepInventory;
 	private ItemStack[] contents;
+	private ItemStack[] matrix;
+	private ItemStack[] anvil;
+	private ItemStack[] enchanting;
 	private ItemStack helmet;
 	private ItemStack chesplate;
 	private ItemStack leggings;
 	private ItemStack boots;
+	private ItemStack cursor;
 	private Player player;
 	
 	public InventorySave(Player player, boolean keep){
@@ -29,6 +36,33 @@ public class InventorySave {
 		chesplate = player.getEquipment().getChestplate();
 		leggings = player.getEquipment().getLeggings();
 		boots = player.getEquipment().getBoots();
+		cursor = player.getOpenInventory().getCursor();
+		matrix = new ItemStack[] {};
+		anvil = new ItemStack[] {};
+		enchanting = new ItemStack[] {};
+		if(player.getOpenInventory().getTopInventory() instanceof CraftingInventory){
+			matrix = ((CraftingInventory) player.getOpenInventory().getTopInventory()).getMatrix();
+			
+			for (int i = 0; i < matrix.length; i++) {
+				matrix[i] = parse(matrix[i]);
+			}
+		}
+		
+		if(player.getOpenInventory().getTopInventory() instanceof AnvilInventory){
+			anvil = ((AnvilInventory) player.getOpenInventory().getTopInventory()).getContents();
+			
+			for (int i = 0; i < anvil.length; i++) {
+				anvil[i] = parse(anvil[i]);
+			}
+		}
+		
+		if(player.getOpenInventory().getTopInventory() instanceof EnchantingInventory){
+			enchanting = ((EnchantingInventory) player.getOpenInventory().getTopInventory()).getContents();
+			
+			for (int i = 0; i < enchanting.length; i++) {
+				enchanting[i] = parse(enchanting[i]);
+			}
+		}
 		keepInventory = keep;
 		this.player = player;
 		
@@ -39,11 +73,12 @@ public class InventorySave {
 				contents[i]=null;
 			}
 		}
-		
+
 		helmet = parse(helmet);
 		chesplate = parse(chesplate);
 		leggings = parse(leggings);
 		boots = parse(boots);
+		cursor = parse(cursor);
 	}
 	
 	public ItemStack parse(ItemStack i){
@@ -122,5 +157,37 @@ public class InventorySave {
 	
 	public void setPlayer(Player player){
 		this.player = player;
+	}
+	
+	public ItemStack getCursor() {
+		return cursor;
+	}
+	
+	public void setCursor(ItemStack cursor) {
+		this.cursor = cursor;
+	}
+	
+	public ItemStack[] getMatrix(){
+		return matrix;
+	}
+	
+	public void setMatrix(ItemStack[] matrix){
+		this.matrix = matrix;
+	}
+	
+	public ItemStack[] getAnvil(){
+		return anvil;
+	}
+	
+	public void setAnvil(ItemStack[] anvil){
+		this.anvil = anvil;
+	}
+	
+	public ItemStack[] getEnchanting(){
+		return enchanting;
+	}
+	
+	public void setEnchanting(ItemStack[] enchanting){
+		this.enchanting = enchanting;
 	}
 }
