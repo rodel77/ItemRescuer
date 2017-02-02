@@ -22,6 +22,7 @@ import mx.com.rodel.utils.Utils;
 public class PuppetTrigger implements Listener{
 	@EventHandler(priority=EventPriority.HIGH)
 	public void onPlayerDeathEvent(PlayerDeathEvent e){
+		
 		boolean find = false;
 		int i = 0;
 		for(ItemStack c : e.getEntity().getInventory().getContents()){

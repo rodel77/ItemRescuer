@@ -57,7 +57,7 @@ public class InventoryRescuer extends JavaPlugin{
 	public static FileConfiguration data = new YamlConfiguration();
 	
 	public static InventoryRescuer getInstance(){
-		return instance;
+		return instance;	
 	}
 	
 	@Override
