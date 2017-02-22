@@ -27,11 +27,15 @@ public class ItemStackPuppet {
 		String[] material = pl.getNode("puppet.material").toString().split(":");
 		
 		if(Utils.isNumeric(material[0])){
-			if(Utils.isNumeric(material[1])){
-				itemstack = new ItemStack(Integer.parseInt(material[0]), 1, (short) 0, Byte.parseByte(material[1]));
-			}else{
-				pl.getLogger().log(Level.WARNING, "Invalid ItemRescurer item meta-id ({0}) must be number!", material[1]);
+			String sid = "0";
+			if(material.length!=1){
+				if(Utils.isNumeric(material[1])){
+					sid = material[1];
+				}else{
+					pl.getLogger().log(Level.WARNING, "Invalid ItemRescurer item meta-id ({0}) must be number!", material[1]);
+				}
 			}
+			itemstack = new ItemStack(Integer.parseInt(material[0]), 1, (short) 0, Byte.parseByte(sid));
 		}else{
 			pl.getLogger().log(Level.WARNING, "Invalid ItemRescurer item material ({0}) must be number!", material[0]);
 		}

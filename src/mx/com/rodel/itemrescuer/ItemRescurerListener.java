@@ -20,11 +20,13 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 import mx.com.rodel.InventoryRescuer;
+import mx.com.rodel.puppet.ItemStackPuppet;
 import mx.com.rodel.utils.DataManager;
 
 /** This file is part of Inventory Rescurer Spigot Resource
@@ -72,6 +74,13 @@ public class ItemRescurerListener implements Listener {
 	@EventHandler
 	public void onPlayerInteractAtEntityEvent(PlayerInteractEntityEvent e){
 		if(e.getRightClicked() instanceof ItemFrame && !(Boolean) InventoryRescuer.getInstance().getNode("itemrestriction.canitemframe") && isr.hasMark(e.getPlayer().getItemInHand()) && !e.getPlayer().hasPermission("itemrescurer.itemrestriction.itemframe")){
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerInteractEvent(PlayerInteractEvent e){
+		if(new ItemStackRescurer().getItemStack().isSimilar(e.getItem()) || new ItemStackPuppet().getItemStack().isSimilar(e.getItem()) ){
 			e.setCancelled(true);
 		}
 	}
