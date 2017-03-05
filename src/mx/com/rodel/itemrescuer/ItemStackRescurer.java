@@ -36,6 +36,7 @@ import mx.com.rodel.utils.Utils;
 public class ItemStackRescurer implements Listener{
 	private static final String MARK = ChatColor.translateAlternateColorCodes('&', "&m&a&r&k&r");
 	private static final String MARK_R = ChatColor.translateAlternateColorCodes('&', "&r&m&a&r");
+	private static final String MARK_UUID = ChatColor.translateAlternateColorCodes('&', "&m&e&e&f&d&r");
 	private ItemStack itemstack;
 	private InventoryRescuer pl;
 	
@@ -172,6 +173,9 @@ public class ItemStackRescurer implements Listener{
 				if(lore.startsWith(MARK) && lore.contains(player.getName())){
 					return true;
 				}
+				if(lore.startsWith(MARK_UUID) && lore.contains(player.getUniqueId().toString())){
+					return true;
+				}
 			}
 		}
 		return false;
@@ -223,6 +227,7 @@ public class ItemStackRescurer implements Listener{
             if((int) pl.getNode("itemrescurer.deaths")!=-1){
             	lore.add(MARK_R + Utils.colorize(pl.getNode("itemrescurer.deathsmsg").toString().replace("{DEATHS}", pl.getNode("itemrescurer.deaths").toString())));
             }
+            lore.add(MARK_UUID + Utils.colorize("&0"+player.getUniqueId()));
             im.setLore(lore);
             item.setItemMeta(im);
         }
