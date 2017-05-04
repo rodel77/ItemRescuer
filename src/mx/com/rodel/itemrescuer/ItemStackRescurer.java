@@ -241,7 +241,7 @@ public class ItemStackRescurer implements Listener{
 			
 			List<String> lore = new ArrayList<>();
 			for (int i = 0; i < im.getLore().size(); i++) {
-				if(!im.getLore().get(i).startsWith(MARK) && !im.getLore().get(i).startsWith(MARK_R)){
+				if(!im.getLore().get(i).startsWith(MARK) && !im.getLore().get(i).startsWith(MARK_R) && !im.getLore().get(i).startsWith(MARK_UUID)){
 					lore.add(im.getLore().get(i));
 				}
 			}
